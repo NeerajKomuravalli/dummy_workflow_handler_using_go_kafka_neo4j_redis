@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/server/errors"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/server/models"
+	redismanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/server/redisManager"
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
 )
@@ -20,11 +22,16 @@ func addDevice(w http.ResponseWriter, r *http.Request) {
 	}
 	err = validate.Struct(&deviceData)
 	if err != nil {
-		fmt.Printf("Error : %s\n", err)
 		errors.ManageErrorResponse(w, fmt.Sprint(err), errors.ValidationError)
 		return
 	}
-	// Put rest of the logic here
+	// Put data on redis
+	err = redismanager.PutData(ctx, redisClient, deviceData.Id, deviceData, 0)
+	if err != nil {
+		errors.ManageErrorResponse(w, fmt.Sprint(err), errors.RedisPutDataError)
+		return
+	}
+
 	successResp := models.SuccessRequest{
 		Success:    true,
 		DeviceData: deviceData,
@@ -42,6 +49,8 @@ func getDevice(w http.ResponseWriter, r *http.Request) {
 }
 
 var validate *validator.Validate
+var ctx = context.Background()
+var redisClient = redismanager.GetRedisClient()
 
 func main() {
 	validate = validator.New()
