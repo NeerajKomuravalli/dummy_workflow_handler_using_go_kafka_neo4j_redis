@@ -26,7 +26,7 @@ func addDevice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Put data on redis
-	err = redismanager.PutData(ctx, redisClient, deviceData.Id, deviceData, 0)
+	err = redisClient.PutData(ctx, deviceData.Id, deviceData, 0)
 	if err != nil {
 		errors.ManageErrorResponse(w, fmt.Sprint(err), errors.RedisPutDataError)
 		return
