@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
 	redismanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/redisManager"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/server/errors"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/server/models"
@@ -50,7 +51,11 @@ func getDevice(w http.ResponseWriter, r *http.Request) {
 
 var validate *validator.Validate
 var ctx = context.Background()
-var redisClient = redismanager.GetRedisClient()
+var redisClient = redismanager.GetRedisClient(
+	globalvariables.DataHandlerRedisIpAddress,
+	globalvariables.DataHandlerRedisPassword,
+	globalvariables.DataHandlerRedisDbIndex,
+)
 
 func main() {
 	validate = validator.New()

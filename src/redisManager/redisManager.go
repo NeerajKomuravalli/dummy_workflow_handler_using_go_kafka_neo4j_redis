@@ -12,11 +12,11 @@ type RedisClient struct {
 	Client *redis.Client
 }
 
-func GetRedisClient() *RedisClient {
+func GetRedisClient(redisIpAddress string, password string, dbIndex int) *RedisClient {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     RedisIpAddress,
-		Password: Password,
-		DB:       DbIndex,
+		Addr:     redisIpAddress,
+		Password: password,
+		DB:       dbIndex,
 	})
 	return &RedisClient{rdb}
 }
