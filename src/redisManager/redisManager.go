@@ -2,7 +2,6 @@ package redismanager
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -31,13 +30,21 @@ func (client *RedisClient) GetData(ctx context.Context, key string) (string, err
 	return val, err
 }
 
-func (client *RedisClient) GetAllKeys(ctx context.Context) {
+func (client *RedisClient) DeleteData(ctx context.Context, key string) (int64, error) {
+	val, err := client.Client.Del(ctx, key).Result()
+	return val, err
+}
+
+func (client *RedisClient) GetAllKeys(ctx context.Context) ([]string, error) {
 	// https://redis.uptrace.dev/get-all-keys/
 	iter := client.Client.Scan(ctx, 0, "*", 0).Iterator()
+	var keys []string
 	for iter.Next(ctx) {
-		fmt.Println(iter.Val()) // Will print keys one after another
+		keys = append(keys, iter.Val())
 	}
-	if err := iter.Err(); err != nil {
+	err := iter.Err()
+	if err != nil {
 		panic(err)
 	}
+	return keys, err
 }
