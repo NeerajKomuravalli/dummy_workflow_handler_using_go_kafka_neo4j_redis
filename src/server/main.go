@@ -52,9 +52,9 @@ func getDevice(w http.ResponseWriter, r *http.Request) {
 var validate *validator.Validate
 var ctx = context.Background()
 var redisClient = redismanager.GetRedisClient(
-	globalvariables.DataHandlerRedisIpAddress,
-	globalvariables.DataHandlerRedisPassword,
-	globalvariables.DataHandlerRedisDbIndex,
+	globalvariables.ServerRedisIpAddress,
+	globalvariables.ServerRedisPassword,
+	globalvariables.ServerRedisDbIndex,
 )
 
 func main() {
