@@ -12,4 +12,9 @@ const (
 	DataHandlerRedisPassword  = ""
 	DataHandlerRedisDbIndex   = 0
 	DataHandlerBufferSize     = 10
+
+	// Kafka
+	KafkaBorkerAddress = "localhost:9092"
+	KafkaTopicName     = "messenger"
+	KafkaGroupId       = "my-group"
 )
