@@ -36,7 +36,11 @@ func handleData(key string) {
 		fmt.Println("Error : ", err)
 	}
 	deviceData := models.DeviceData{}
-	json.Unmarshal([]byte(data), &deviceData)
+	err = json.Unmarshal([]byte(data), &deviceData)
+	if err != nil {
+		// This is the case when the data coming into redis is not valid and we need to filter it out
+		fmt.Println("Handle this case! :: Filter this data out")
+	}
 	deviceDataChannel <- deviceData
 	serverRedisClient.DeleteData(ctx, key)
 }
