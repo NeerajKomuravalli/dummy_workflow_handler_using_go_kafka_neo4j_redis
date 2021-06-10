@@ -11,4 +11,5 @@ const (
 	DataHandlerRedisIpAddress = "localhost:6380"
 	DataHandlerRedisPassword  = ""
 	DataHandlerRedisDbIndex   = 0
+	DataHandlerBufferSize     = 10
 )
