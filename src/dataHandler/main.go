@@ -7,6 +7,7 @@ import (
 	"time"
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
+	kafkamanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/kafkaManager"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/models"
 	redismanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/redisManager"
 )
@@ -36,31 +37,43 @@ func handleData(key string) {
 		fmt.Println("Error : ", err)
 	}
 	deviceData := models.DeviceData{}
+	// We unmarshel only to make sure the data being sent is right
 	err = json.Unmarshal([]byte(data), &deviceData)
 	if err != nil {
 		// This is the case when the data coming into redis is not valid and we need to filter it out
 		fmt.Println("Handle this case! :: Filter this data out")
 	}
-	deviceDataChannel <- deviceData
+	dataPair := deviceDataPair{
+		data,
+		deviceData,
+	}
+	deviceDataChannel <- dataPair
 	serverRedisClient.DeleteData(ctx, key)
 }
 
 func channelListner() {
 	for {
-		deviceData := <-deviceDataChannel
-		fmt.Println("Output : ", deviceData)
-		err := addToKafka()
+		dataPair := <-deviceDataChannel
+		fmt.Println("Output : ", dataPair.DeviceData)
+		err := addToKafka(dataPair)
 		if err != nil {
-			serverRedisClient.PutData(ctx, deviceData.Id, deviceData, 0)
+			fmt.Println("error : ", err)
+			serverRedisClient.PutData(ctx, dataPair.DeviceData.Id, dataPair.DeviceData, 0)
+			break
 		}
 	}
 }
 
-func addToKafka() error {
-	fmt.Println("Add to kafka")
+func addToKafka(dataPair deviceDataPair) error {
+	fmt.Printf("Add to kafka : %s\n", dataPair.JsonData)
 	// Add data to kafka and send error if unsuccessfull
-	err := fmt.Errorf("Error")
+	err := kafkaWriter.WriteMessages(ctx, []byte(dataPair.DeviceData.Id), []byte(dataPair.JsonData))
 	return err
+}
+
+type deviceDataPair struct {
+	JsonData   string
+	DeviceData models.DeviceData
 }
 
 // To get the data from the server
@@ -70,7 +83,10 @@ var serverRedisClient = redismanager.GetRedisClient(
 	globalvariables.ServerRedisDbIndex,
 )
 var ctx = context.Background()
-var deviceDataChannel = make(chan models.DeviceData, globalvariables.DataHandlerBufferSize)
+var deviceDataChannel = make(chan deviceDataPair, globalvariables.DataHandlerBufferSize)
+
+// Get kafka writer
+var kafkaWriter = kafkamanager.GetKafkaWriter()
 
 func main() {
 	go channelListner()
