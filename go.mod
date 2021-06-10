@@ -8,4 +8,5 @@ require (
 	github.com/go-redis/redis/v8 v8.10.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/segmentio/kafka-go v0.4.16 // indirect
 )
