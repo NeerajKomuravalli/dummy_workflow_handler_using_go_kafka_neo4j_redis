@@ -12,6 +12,12 @@ const (
 	DataHandlerRedisPassword  = ""
 	DataHandlerRedisDbIndex   = 0
 	DataHandlerBufferSize     = 10
+	// Logging
+	DataHandlerLogFolderPath         = "logs"
+	DataHandlerLogFileName           = "logs.txt"
+	DataHandlerLogTimestampFormat    = "02-01-2006 15:04:05"
+	DataHandlerLogFullTimestamp      = true
+	DataHandlerLogFilePermissionCode = 0644
 
 	// Kafka
 	KafkaBorkerAddress = "localhost:9092"
