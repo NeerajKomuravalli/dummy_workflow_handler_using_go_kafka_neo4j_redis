@@ -58,8 +58,11 @@ func channelListner() {
 		err := addToKafka(dataPair)
 		if err != nil {
 			fmt.Println("error : ", err)
-			serverRedisClient.PutData(ctx, dataPair.DeviceData.Id, dataPair.DeviceData, 0)
-			break
+			err = serverRedisClient.PutData(ctx, dataPair.DeviceData.Id, dataPair.DeviceData, 0)
+			if err != nil {
+				fmt.Println("Redis put data error : ", err)
+			}
+			// break
 		}
 	}
 }
