@@ -12,11 +12,6 @@ import (
 	redismanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/redisManager"
 )
 
-// Data handler
-
-// - Poll on redis for updates
-// - filter and pre-process data and put it on a Kafka bus
-
 func pollOnRedis() {
 	for {
 		iter := serverRedisClient.Client.Scan(ctx, 0, "*", 0).Iterator()
