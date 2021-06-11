@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"path/filepath"
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
 	"github.com/segmentio/kafka-go"
@@ -14,7 +15,18 @@ type KafkaReader struct {
 }
 
 func GetKafkaReader() *KafkaReader {
-	logger := log.New(os.Stdout, "kafka reader: ", 0)
+	if _, err := os.Stat(globalvariables.KafkaLogFolderPath); os.IsNotExist(err) {
+		os.MkdirAll(globalvariables.KafkaLogFolderPath, 0777)
+	}
+	logFile, err := os.OpenFile(
+		filepath.Join(globalvariables.KafkaLogFolderPath, globalvariables.KafkaLogFileName),
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+		globalvariables.KafkaLogFilePermissionCode,
+	)
+	if err != nil {
+		log.Panic(err)
+	}
+	logger := log.New(logFile, "kafka reader: ", log.Ldate|log.Ltime|log.Lshortfile)
 	kr := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{globalvariables.KafkaBorkerAddress},
 		Topic:   globalvariables.KafkaTopicName,
