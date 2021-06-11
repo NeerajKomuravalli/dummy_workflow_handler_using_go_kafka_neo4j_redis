@@ -9,7 +9,6 @@ import (
 	"time"
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
-	kafkamanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/kafkaManager"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/models"
 	redismanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/redisManager"
 	log "github.com/sirupsen/logrus"
@@ -42,37 +41,12 @@ func handleData(key string) {
 		log.Error(fmt.Sprintf("%s is not the expected data", data))
 		log.Error(err)
 	}
-	dataPair := deviceDataPair{
-		data,
-		deviceData,
+	dataPair := models.DeviceDataPair{
+		JsonData:   data,
+		DeviceData: deviceData,
 	}
-	deviceDataChannel <- dataPair
+	channelListner.Channel <- dataPair
 	serverRedisClient.DeleteData(ctx, key)
-}
-
-func channelListner() {
-	for {
-		dataPair := <-deviceDataChannel
-		fmt.Println("Output : ", dataPair.DeviceData)
-		err := addToKafka(dataPair)
-		if err != nil {
-			log.Error(err)
-			fmt.Println("error : ", err)
-			err = serverRedisClient.PutData(ctx, dataPair.DeviceData.Id, dataPair.DeviceData, 0)
-			if err != nil {
-				fmt.Println("Redis put data error : ", err)
-				log.Error(err)
-			}
-			// break
-		}
-	}
-}
-
-func addToKafka(dataPair deviceDataPair) error {
-	fmt.Printf("Add to kafka : %s\n", dataPair.JsonData)
-	// Add data to kafka and send error if unsuccessfull
-	err := kafkaWriter.WriteMessages(ctx, []byte(dataPair.DeviceData.Id), []byte(dataPair.JsonData))
-	return err
 }
 
 func setUpLogger() {
@@ -94,11 +68,6 @@ func setUpLogger() {
 	log.SetOutput(logFile)
 }
 
-type deviceDataPair struct {
-	JsonData   string
-	DeviceData models.DeviceData
-}
-
 // To get the data from the server
 var serverRedisClient = redismanager.GetRedisClient(
 	globalvariables.ServerRedisIpAddress,
@@ -106,13 +75,11 @@ var serverRedisClient = redismanager.GetRedisClient(
 	globalvariables.ServerRedisDbIndex,
 )
 var ctx = context.Background()
-var deviceDataChannel = make(chan deviceDataPair, globalvariables.DataHandlerBufferSize)
 
-// Get kafka writer
-var kafkaWriter = kafkamanager.GetKafkaWriter()
+var channelListner = NewChannelListner()
 
 func main() {
 	setUpLogger()
-	go channelListner()
+	go channelListner.ListenAndAddToKafka()
 	pollOnRedis()
 }
