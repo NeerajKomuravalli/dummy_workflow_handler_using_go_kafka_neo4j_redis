@@ -1,3 +1,4 @@
 src/server/server
 src/dataHandler/dataHandler
 .DS_Store
+logs
