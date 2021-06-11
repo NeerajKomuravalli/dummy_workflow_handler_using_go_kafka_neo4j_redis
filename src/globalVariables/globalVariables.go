@@ -23,4 +23,18 @@ const (
 	KafkaBorkerAddress = "localhost:9092"
 	KafkaTopicName     = "messenger"
 	KafkaGroupId       = "my-group"
+	// Logging
+	KafkaLogFolderPath         = "logs"
+	KafkaLogFileName           = "kafka_logs.txt"
+	KafkaLogTimestampFormat    = "02-01-2006 15:04:05"
+	KafkaLogFullTimestamp      = true
+	KafkaLogFilePermissionCode = 0644
+
+	// Workflow handler
+	// Logging
+	WorkflowLogFolderPath         = "logs"
+	WorkflowLogFileName           = "logs.txt"
+	WorkflowLogTimestampFormat    = "02-01-2006 15:04:05"
+	WorkflowLogFullTimestamp      = true
+	WorkflowLogFilePermissionCode = 0644
 )
