@@ -1,6 +1,13 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
+
+type DeviceDataPair struct {
+	JsonData   string
+	DeviceData DeviceData
+}
 
 type DeviceData struct {
 	Name        string           `json:"name" validate:"required"`
