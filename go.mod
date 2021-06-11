@@ -9,4 +9,5 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/segmentio/kafka-go v0.4.16 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 )
