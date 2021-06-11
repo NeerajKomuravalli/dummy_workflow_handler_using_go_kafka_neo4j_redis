@@ -1,17 +1,10 @@
 package main
 
-// - Take Device data from Kafka
-// - Trigger relevant workflows (as of now dummy workflow), if any
-// - update neo4j
-
 import (
-	"context"
-	"fmt"
 	"os"
 	"path/filepath"
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
-	kafkamanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/kafkaManager"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -34,16 +27,13 @@ func setUpLogger() {
 	log.SetOutput(logFile)
 }
 
-var kafkaReader = kafkamanager.GetKafkaReader()
-var ctx = context.Background()
+var kafkaListner = NewKafkaListner()
 
 func main() {
 	setUpLogger()
+	go kafkaListner.Listen()
+	c := 0
 	for {
-		data, err := kafkaReader.ReadMessages(ctx)
-		if err != nil {
-			log.Error(err)
-		}
-		fmt.Println("Data : ", string(data))
+		c += 1
 	}
 }
