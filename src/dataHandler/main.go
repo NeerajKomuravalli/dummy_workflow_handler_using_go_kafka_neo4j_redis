@@ -65,6 +65,7 @@ func setUpLogger() {
 	if err != nil {
 		log.Panic(err)
 	}
+	log.SetLevel(log.InfoLevel)
 	log.SetOutput(logFile)
 }
 
