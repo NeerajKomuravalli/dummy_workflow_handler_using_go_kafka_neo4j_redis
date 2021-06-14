@@ -76,7 +76,6 @@ var serverRedisClient = redismanager.GetRedisClient(
 	globalvariables.ServerRedisDbIndex,
 )
 var ctx = context.Background()
-
 var channelListner = NewChannelListner()
 var kafkaWriter = kafkamanager.GetKafkaWriter()
 
