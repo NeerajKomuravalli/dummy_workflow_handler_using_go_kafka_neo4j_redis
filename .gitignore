@@ -1,5 +1,6 @@
 src/server/server
 src/dataHandler/dataHandler
 src/workdlowHandler/workdlowHandler
+src/workdlowHandler/workdlowHandler
 .DS_Store
 logs
