@@ -31,6 +31,7 @@ const (
 	KafkaLogFilePermissionCode = 0644
 
 	// Workflow handler
+	WorkflowBufferSize = 10
 	// Logging
 	WorkflowLogFolderPath         = "logs"
 	WorkflowLogFileName           = "logs.txt"
