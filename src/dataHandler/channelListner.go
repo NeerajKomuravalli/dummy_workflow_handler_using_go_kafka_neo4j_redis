@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
+	kafkamanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/kafkaManager"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/models"
 	log "github.com/sirupsen/logrus"
 )
@@ -14,7 +15,7 @@ type ChannelListner struct {
 	Context context.Context
 }
 
-func NewChannelListner() *ChannelListner {
+func NewChannelListner(ctx context.Context) *ChannelListner {
 	return &ChannelListner{
 		make(chan models.DeviceDataPair, globalvariables.DataHandlerBufferSize),
 		ctx,
@@ -30,6 +31,7 @@ func (cl *ChannelListner) ListenAndAddToKafka() {
 }
 
 func manageKafkaWriteProcess(channelListnerContex context.Context, dataPair models.DeviceDataPair) {
+	kafkaWriter := kafkamanager.GetKafkaWriter()
 	err := kafkaWriter.WriteMessages(
 		channelListnerContex,
 		[]byte(dataPair.DeviceData.Id),
