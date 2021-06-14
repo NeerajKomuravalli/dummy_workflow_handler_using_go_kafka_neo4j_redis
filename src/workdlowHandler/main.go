@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 
@@ -28,11 +29,14 @@ func setUpLogger() {
 	log.SetOutput(logFile)
 }
 
-var kafkaListner = NewKafkaListner()
+var ctx = context.Background()
+var channelListner = NewChannelListner(ctx)
+var kafkaListner = NewKafkaListner(ctx, *channelListner)
 
 func main() {
 	setUpLogger()
 	go kafkaListner.Listen()
+	go channelListner.ListenAndTriggerWorkFlow()
 	c := 0
 	for {
 		c += 1
