@@ -9,6 +9,7 @@ import (
 	"time"
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
+	kafkamanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/kafkaManager"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/models"
 	redismanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/redisManager"
 	log "github.com/sirupsen/logrus"
@@ -77,6 +78,7 @@ var serverRedisClient = redismanager.GetRedisClient(
 var ctx = context.Background()
 
 var channelListner = NewChannelListner()
+var kafkaWriter = kafkamanager.GetKafkaWriter()
 
 func main() {
 	setUpLogger()
