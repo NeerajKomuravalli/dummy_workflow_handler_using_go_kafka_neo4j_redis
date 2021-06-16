@@ -34,7 +34,11 @@ func setUpLogger() {
 var ctx = context.Background()
 var channelListner = NewChannelListner(ctx)
 var kafkaListner = NewKafkaListner(ctx, *channelListner)
-var newNeo4jClient = neo4jmanager.NewNeo4jClient("bolt://0.0.0.0:7687", "neo4j", "neo4j-testing")
+var newNeo4jClient = neo4jmanager.NewNeo4jClient(
+	globalvariables.Neo4jUri,
+	globalvariables.Neo4jDbName,
+	globalvariables.Neo4jDbPassword,
+)
 
 type Item struct {
 	Id   int64
