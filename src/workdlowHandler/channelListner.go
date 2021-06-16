@@ -6,6 +6,7 @@ import (
 
 	globalvariables "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/globalVariables"
 	"github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/models"
+	neo4jmanager "github.com/NeerajKomuravalli/dummy_workflow_handler_using_go_kafka_neo4j_redis/src/neo4jManager"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	log "github.com/sirupsen/logrus"
 )
@@ -33,7 +34,7 @@ func (cl *ChannelListner) ListenAndTriggerWorkFlow() {
 func triggerWorkFlow(deviceData models.DeviceData) {
 	// All workflow related code will reside here for now neo4j code will be triggered from here
 	fmt.Println("Data at workflow : ", deviceData)
-	fn := GenerateDeviceDataNodeCreationFn(deviceData)
+	fn := neo4jmanager.GenerateDeviceDataNodeCreationFn(deviceData)
 	session := newNeo4jClient.Driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close()
 	result, err := session.WriteTransaction(fn)
